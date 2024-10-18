@@ -1,0 +1,22 @@
+Vagrant.configure("2") do |config|
+# Usar Ubuntu 18.04 como base
+config.vm.box = "ubuntu/bionic64"
+
+# Configurar la red en modo puente para que la VM esté en la misma red que la máquina física
+config.vm.network "public_network", ip:"192.168.93.11"
+
+# Configurar recursos de la VM
+config.vm.provider "virtualbox" do |vb|
+vb.memory = "1024"  # Asignar 1GB de RAM
+vb.cpus = 2  # Asignar 2 CPUs
+end
+
+# Instalar unzip, wrk y sus dependencias
+config.vm.provision "shell", inline: <<-SHELL
+sudo apt-get update
+sudo apt-get install -y unzip build-essential libssl-dev git
+git clone https://github.com/wg/wrk.git
+cd wrk && make
+sudo cp wrk /usr/local/bin/
+SHELL
+end

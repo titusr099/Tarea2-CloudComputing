@@ -1,0 +1,23 @@
+Vagrant.configure("2") do |config|
+  # Usar Ubuntu 18.04 como base
+  config.vm.box = "ubuntu/bionic64"
+
+  # Configurar red en modo puente con una IP estática en el rango 192.168.93.x
+  config.vm.network "public_network", ip: "192.168.93.10"
+
+  # Configurar recursos
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"  # 1GB de RAM
+    vb.cpus = 2  # 2 CPUs
+  end
+
+  # Instalar NGINX y configurar la página web
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo apt-get update
+    sudo apt-get install -y nginx
+    echo "<h1>Bienvenido al Servidor VM</h1>" | sudo tee /var/www/html/index.html
+    sudo systemctl start nginx
+    sudo systemctl enable nginx
+  SHELL
+end
+
